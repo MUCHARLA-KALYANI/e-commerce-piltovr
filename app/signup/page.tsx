@@ -1,12 +1,12 @@
-import React from "react";
-import SignForm from "./signForm";
+import React from 'react';
+import SignForm from './signForm';
 
-type Props={}
+const SignUpPage = () => {
+  return (
+    <div>
+      <SignForm />
+    </div>
+  );
+};
 
-const page = (props:Props) =>{
-    return(
-        <SignForm/>
-    )
-}
-
-export default page
+export default SignUpPage;
