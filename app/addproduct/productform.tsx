@@ -28,8 +28,9 @@ const Productform = (props: Props) => {
      store: ''
   });
 
-   const [Description,setDescription] = useState<string[]>([])
-
+   const [Description,setDescription] = useState<string>('')
+   const [info,updateinfo]=useState<any>()
+   const[imageUrls,setImageUrls]=useState<string[]>([])
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, 
@@ -46,7 +47,29 @@ const Productform = (props: Props) => {
         [e.target.name] : inventory,
      });
   };
+   
+  const handleImageChange =()=>{
+    const stringimages=JSON.stringify(imageUrls)
+    setFormData({
+        ...formData,
+        images:stringimages,
+        description:Description,
+        userId:id
+    })
+  }
+//   useEffect(()=>{
+//     console.log(formData.images)
+//     console.log(formData)
+//   },[formData])
 
+useEffect(()=>{
+    setFormData((prevFormData)=>({
+        ...prevFormData,
+        description:Description,
+        images:imageUrls.toString(),
+        userId:id
+    }))
+},[imageUrls])
   return (
     <div className='px-5 max-w-[1280px] mx-auto mb-10'>
       <div>
@@ -140,8 +163,11 @@ const Productform = (props: Props) => {
             <Color setFormData={setFormData} Color={formData.color}/>
           </div>
         </div>
-        <label htmlFor='' className='mt-10 inline-block font-medium'>Description about your product</label>
+        <label htmlFor="" className='mt-10 inline-block font-medium'>Description about your product</label>
         <Para setDescription={setDescription} description={formData.description}/>
+        <label htmlFor="" className='mt-10 inline-block font-medium'>Upload Images</label>
+        <ImageUpload info={info} updateInfo={updateinfo} imageUrls={imageUrls} setImageUrls={setImageUrls} handleImageChange={handleImageChange}/>
+
       </div>
     </div>
   );

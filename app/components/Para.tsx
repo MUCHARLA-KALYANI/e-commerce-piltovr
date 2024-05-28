@@ -1,6 +1,7 @@
 import React,{useEffect,useState,useRef}from "react";
 import {EditorContent,useEditor} from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import TextEditor from "./TextEditor";
 
 
 interface Para{
@@ -41,6 +42,7 @@ const Para:React.FC<Para> = ({setDescription,description})=>{
       },[])
     return(
        <div className={`mx-auto border-[1px] mt-4 rounded-xl ${focus ?"border-pink-500 border-[2px] ml-0":""}`} ref={menuRef} >
+         {/* <TextEditor editor={editor}/> */}
          <EditorContent editor={editor} style={{padding:'18px'}} onClick={()=>setFocus(true)}/>
        </div>
     )
