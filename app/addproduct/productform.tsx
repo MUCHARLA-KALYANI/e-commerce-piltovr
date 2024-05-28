@@ -6,6 +6,7 @@ import Navbar from "../components/Navbar";
 import { useRouter } from 'next/navigation';
 import Size from '../components/Size';
 import Color from '../components/Color';
+import Para from '../components/Para';
 
 type Props = {}
 
@@ -140,7 +141,7 @@ const Productform = (props: Props) => {
           </div>
         </div>
         <label htmlFor='' className='mt-10 inline-block font-medium'>Description about your product</label>
-       
+        <Para setDescription={setDescription} description={formData.description}/>
       </div>
     </div>
   );
