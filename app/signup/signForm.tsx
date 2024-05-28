@@ -4,7 +4,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import axios from "axios";
 
-const SignForm = () => {
+type Props={}
+
+const SignForm = (props:Props) => {
   const [user, setUser] = useState({
     name: "",
     email: "",
@@ -20,7 +22,7 @@ const SignForm = () => {
       password: user.password
     };
 
-    axios.post('/api/user', data)
+    axios.post('/api/register', data)
       .then((response) => {
         console.log(response);
         router.push("/signin");
