@@ -14,7 +14,7 @@ const Navbar = (props : Props) => {
     const [showProfile , setShowProfile] = useState<boolean>(false)
     const [showNav,setShowNav] = useState<boolean>(false)
     const {data:session} = useSession()
-    console.log(session?.user)
+    // console.log(session?.user)
 
     const SignOut=()=>{
         if(session && session.user){

@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import Size from '../components/Size';
 import Color from '../components/Color';
 import Para from '../components/Para';
+import ImageUpload from '../components/ImageUpload';
 
 type Props = {}
 
@@ -57,10 +58,10 @@ const Productform = (props: Props) => {
         userId:id
     })
   }
-//   useEffect(()=>{
-//     console.log(formData.images)
-//     console.log(formData)
-//   },[formData])
+  useEffect(()=>{
+    console.log(formData.images)
+    console.log(formData)
+  },[formData])
 
 useEffect(()=>{
     setFormData((prevFormData)=>({
@@ -70,6 +71,17 @@ useEffect(()=>{
         userId:id
     }))
 },[imageUrls])
+
+const postData = async()=>{
+    handleImageChange()
+    try{
+        const response = await axios.post('/api/addproduct',formData)
+        router.push('/')
+        console.log(response)
+    }catch(error){
+        console.log(error)
+    }
+}
   return (
     <div className='px-5 max-w-[1280px] mx-auto mb-10'>
       <div>
@@ -167,7 +179,7 @@ useEffect(()=>{
         <Para setDescription={setDescription} description={formData.description}/>
         <label htmlFor="" className='mt-10 inline-block font-medium'>Upload Images</label>
         <ImageUpload info={info} updateInfo={updateinfo} imageUrls={imageUrls} setImageUrls={setImageUrls} handleImageChange={handleImageChange}/>
-
+        <button onClick={postData} className='text-white mt-10 border-[1px] bg-purple-500 rounded-lg px-5 p-2'>Submit</button>
       </div>
     </div>
   );
