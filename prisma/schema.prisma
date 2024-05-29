@@ -20,6 +20,9 @@ model User{
   email String @unique @db.VarChar(255)
   password String @db.VarChar(255)
   Product Product[]
+  Cart Cart[]
+   Review Review[]
+    Purchased Purchased[]
 }
 
 model Product{
@@ -36,5 +39,41 @@ model Product{
   images String @db.Text
   userId Int
   User User @relation(fields: [userId], references:[id],onDelete:Cascade)
+  Cart Cart[]
+  Review Review[]
+  Purchased Purchased[]
+  @@index([userId])
+}
+model Cart {
+  id        Int      @id @default(autoincrement())
+  productId Int
+  userId    Int
+  Product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([userId])
+}
+
+model Purchased {
+    id        Int     @id @default(autoincrement())
+    isPaid    Boolean
+    productId Int
+    Product Product @relation(fields: [productId],references: [id],onDelete: Cascade)
+    userId Int
+    User User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    @@index([productId])
+    @@index([userId])
+}
+
+model Review {
+  id        Int     @id @default(autoincrement())
+  rating Int
+  commentry String
+  productId Int
+  Product Product @relation(fields: [productId],references: [id],onDelete: Cascade)
+  userId Int
+  User User @relation(fields: [userId],references: [id],onDelete: Cascade)
+  @@index([productId])
   @@index([userId])
 }
