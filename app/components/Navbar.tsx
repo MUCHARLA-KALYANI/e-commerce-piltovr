@@ -19,7 +19,7 @@ const Navbar = (props : Props) => {
     const SignOut=()=>{
         if(session && session.user){
             return(
-                <ul className="py-5 px-1 text-neutrl-600">
+                <ul className="py-5 px-1 text-neutrl-600 ml-[-26px]">
                    <li className="hover:bg-gray-100 hover:text-neutral-900 px-5 py-2 cursor-pointer">{session.user.name}</li>
                    <li onClick={()=>signOut()} className="whitespace-nowrap hover:text-red-600 px-5 py-2 cursor-pointer">SignOut</li>
                    <li className="whitespace-nowrap hover:bg-gray-100 hover:text-neutral-900 px-5 py-2 cursor-pointer"><a href="/addproduct">Add product</a></li>
