@@ -29,11 +29,12 @@ const AllCartProduct = async (props: Props) => {
         return(
             <div className='relative flex items-center justify-center'>
                 <img src="empty.png" alt="" />
-                <h1 className='absolute top-[80%] text-2xl text-purple-600'>Empty Cart</h1>
+                <h1 className='absolute top-[80%] text-2xl text-purple-600'></h1>
             </div>
         )
     }
   return (
+    <div>
     <div className='mt-14'>
         {cartProducts.map((cartProduct) => (
             <div key={cartProduct?.id} className='flex items-center justify-between w-8/12 mx-auto shadow-lg p-5 rounded-lg mt-6'>
@@ -53,6 +54,7 @@ const AllCartProduct = async (props: Props) => {
             </div>
         ))}
         <Button allIds  = {allIds} userId = {props.userId} />
+    </div>
     </div>
   )
 }

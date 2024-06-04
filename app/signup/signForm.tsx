@@ -70,7 +70,7 @@ const SignForm = (props:Props) => {
           Register Now
         </button>
         <Link href="/signin" className="text-sm text-center mt-5 text-neutral-600">
-          Already have an account?
+          Already have an account?<span className="text-blue-600">click here</span>
         </Link>
         <Link href="/" className="text-center mt-2">Home</Link>
       </div>

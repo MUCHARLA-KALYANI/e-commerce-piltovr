@@ -1,63 +1,70 @@
-// // import Stripe from "stripe"
-// import { NextResponse } from "next/server"
-// import prisma from "@/app/prismadb"
+import paypal from '@paypal/checkout-server-sdk';
+import { NextResponse } from 'next/server';
+import prisma from '@/app/prismadb';
 
-// // const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {apiVersion:'2023-08-16', typescript:true})
+// Ensure that PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET are defined
+const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID as string;
+const PAYPAL_CLIENT_SECRET = process.env.PAYPAL_CLIENT_SECRET as string;
 
-// const corsHeader = {
-//     "Access-Control-Allow-Origin":"*",
-//     "Access-Control-Allow-Methods":"GET,POST, PUT, DELETE, OPTIONS",
-//     "Access-Control-Allow-Headers":"Content-Type, Authorization"
-// }
+if (!PAYPAL_CLIENT_ID || !PAYPAL_CLIENT_SECRET) {
+  throw new Error('PayPal client ID and secret must be set in environment variables.');
+}
 
-// export async function OPTIONS () {
-//     return NextResponse.json({}, {headers:corsHeader})
-// }
+// Set up and return PayPal client
+function getPayPalClient() {
+  let environment = new paypal.core.SandboxEnvironment(PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET);
+  return new paypal.core.PayPalHttpClient(environment);
+}
 
-// export async function POST(req:Request){
-//     const {productIds, userId} = await req.json()
+const corsHeader = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET,POST, PUT, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+};
 
-//     if(!productIds || productIds.length === 0){
-//         return new NextResponse("Product ids not found",{status:400})
-//     }
+export async function OPTIONS() {
+  return NextResponse.json({}, { headers: corsHeader });
+}
 
-//     const products = await prisma.product.findMany({
-//         where:{
-//             id:{
-//                 in:productIds
-//             }
-//         }
-//     })
+export async function POST(req: Request) {
+  const { productIds, userId } = await req.json();
+  if (!productIds || productIds.length === 0) {
+    return new NextResponse('Product ids not found', { status: 400 });
+  }
 
-//     // const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = []
+  const products = await prisma.product.findMany({
+    where: {
+      id: {
+        in: productIds,
+      },
+    },
+  });
 
-//     products.forEach((product)=>{
-//         line_items.push({
-//             quantity:1,
-//             price_data:{
-//                 currency:'USD',
-//                 product_data:{
-//                     name:product.title
-//                 },
-//                 unit_amount:product.price * 100
-//             }
-//         })
-//     })
-    
-//     const session = await stripe.checkout.sessions.create({
-//         line_items,
-//         mode:'payment',
-//         billing_address_collection:'auto',
-//         phone_number_collection:{
-//             enabled:false
-//         },
-//         success_url: `${process.env.NEXT_PUBLIC_API_BASE_URL}/cart?success=1`,
-//         cancel_url: `${process.env.NEXT_PUBLIC_API_BASE_URL}/cart?cancelled=1`,
-//         metadata:{
-//             productIds:JSON.stringify(productIds),
-//             userId:userId
-//         }
-//     })
+  const orderRequest: paypal.orders.OrdersCreateRequest.RequestData = {
+    intent: 'CAPTURE', // Ensure this matches the type CheckoutPaymentIntent
+    purchase_units: products.map((product) => ({
+      amount: {
+        currency_code: 'USD',
+        value: (product.price / 100).toFixed(2),
+      },
+      description: product.title,
+    })),
+  };
 
-//     return NextResponse.json({url:session.url}, {headers:corsHeader})
-// }
+  const client = getPayPalClient();
+  const request = new paypal.orders.OrdersCreateRequest();
+  request.requestBody(orderRequest);
+
+  let order;
+  try {
+    order = await client.execute(request);
+  } catch (err) {
+    let errorMessage = 'Error creating order';
+    if (err instanceof Error) {
+      errorMessage = err.message;
+    }
+    return new NextResponse(errorMessage, { status: 500 });
+  }
+
+  return NextResponse.json({ orderID: order.result.id, userId }, { headers: corsHeader });
+}

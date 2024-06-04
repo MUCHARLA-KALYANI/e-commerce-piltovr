@@ -57,7 +57,7 @@ const SigninForm = (props:Props) => {
         Login Now
       </button>
       <Link href="/signup" className="text-sm text-center mt-5 text-neutral-600">
-        Don't have an account?
+        Don't have an account?<span className='text-blue-400'>click here</span>
       </Link>
       <Link href="/" className="text-center mt-2">Home</Link>
     </div>

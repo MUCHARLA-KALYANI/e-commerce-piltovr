@@ -6,6 +6,7 @@ import Review from '@/app/components/Review'
 import ReviewSection from '../ReviewSection'
 import { getServerSession } from "next-auth";
 import {options} from "@/app/api/auth/[...nextauth]/options"
+import Navbar from '@/app/components/Navbar'
 
 
 type Props = {}
@@ -33,11 +34,13 @@ export default async function Page({params}:{params:{slug:string}}){
     }
     const urlString = product?.images
     return(
+        <div>
+            <Navbar/>
         <div className='max-w-[1280px] mx-auto px-5 py-5'>
-            <div className='font-semibold text-2xl mb-2'>
+            {/* <div className='font-semibold text-2xl mb-2'>
                 <a href="/">AUTH</a>
-            </div>
-            <hr />
+            </div> */}
+            {/* <hr /> */}
             {product && (
                 <div className='grid grid-cols-2 mt-10 gap-14'>
                     {urlString && (
@@ -94,6 +97,7 @@ export default async function Page({params}:{params:{slug:string}}){
                     <Review productId={product?.id} userId={currentUserId ? Number(currentUserId) : undefined} />
                 </div>
             </div>
+        </div>
         </div>
     )
 }

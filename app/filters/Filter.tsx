@@ -20,37 +20,37 @@ type Props = {
 const Filter = (props: Props) => {
     const [showFilter, setShowFilter] = useState<boolean>(false)
 
-    const handelMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.name === "min" ? parseInt(e.target.value) : e.target.value;
+    const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.name === 'min' ? parseInt(e.target.value) : e.target.value;
         props.setPrice({
-            ...props.price,
-            [e.target.name]: value
-        })
-    }
+          ...props.price,
+          [e.target.name]: value,
+        });
+      };
 
-    const handlMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.name === "max" ? parseInt(e.target.value) : e.target.value;
+      const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.name === 'max' ? parseInt(e.target.value) : e.target.value;
         props.setPrice({
-            ...props.price,
-            [e.target.name]: value
-        })
-    }
+          ...props.price,
+          [e.target.name]: value,
+        });
+      };
 
-    const toggleCategory = (category: string) => {
-        props.setSelectedCategories((prevCategories) => 
-            prevCategories.includes(category) 
-            ? prevCategories.filter((c) => c !== category):
-            [...prevCategories, category]
-        )
-    }
+      const toggleCategory = (category: string) => {
+        props.setSelectedCategories((prevCategories) =>
+          prevCategories.includes(category)
+            ? prevCategories.filter((c) => c !== category)
+            : [...prevCategories, category]
+        );
+      };
 
-    const togglesize = (size: string) => {
-        props.setSelectedSize((prevSize) => 
-            prevSize.includes(size) 
-            ? prevSize.filter((c) => c !== size):
-            [...prevSize, size]
-        )
-    }
+      const toggleSize = (size: string) => {
+        props.setSelectedSize((prevSize) =>
+          prevSize.includes(size)
+            ? prevSize.filter((c) => c !== size)
+            : [...prevSize, size]
+        );
+      };
 
     const toggleColor = (color: string) => {
         props.setSelectedAllHexValues((prevColor) => 
@@ -61,34 +61,54 @@ const Filter = (props: Props) => {
     }
 
     const getAllColors = async () => {
-        try{
-            const response = await axios.get('/api/color');
-            // console.log("Colors:", response.data);
-            return response.data
+        try {
+          const response = await axios.get('/api/color');
+          return response.data;
+        } catch (error) {
+          console.error('Error', error);
+          return null;
         }
-        catch(error){
-            console.error("Error", error)
-            return null
-        }
-    }
+      };
+    // useEffect(() => {
+    //     getAllColors().then((allColors) => {
+    //         if(allColors){
+    //             const hextSet = new Set<string>()
+    //             allColors.forEach((element: any) => {
+    //                 const colors = element.color.split(',')
+    //                 colors.forEach((color: string) => {
+    //                     const hextValue = color.replace("#", "")
+    //                     hextSet.add(hextValue)
+    //                 })
+    //             })
+    //             const uniqueHexValues: string[] = Array.from(hextSet)
+    //             props.setAllHexValues(uniqueHexValues)
+    //         }
+    //     })
+    // }, [])
 
     useEffect(() => {
-        getAllColors().then((allColors) => {
-            if(allColors){
-                const hextSet = new Set<string>()
-                allColors.forEach((element: any) => {
-                    const colors = element.color.split(',')
-                    colors.forEach((color: string) => {
-                        const hextValue = color.replace("#", "")
-                        hextSet.add(hextValue)
-                    })
-                })
-                const uniqueHexValues: string[] = Array.from(hextSet)
-                props.setAllHexValues(uniqueHexValues)
-            }
-        })
-    }, [])
-
+        axios
+          .get('/api/filterproduct', {
+            params: {
+              'categories[]': props.selectedCategories,
+              'size[]': props.selectedSize,
+              'price[min]': props.price.min,
+              'price[max]': props.price.max,
+              'colors[]': props.selectedHexValues,
+            },
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+          .then((response) => {
+            // Update state with filtered products
+            console.log('Filtered products:', response.data);
+            // Set the filtered products in the state
+          })
+          .catch((error) => {
+            console.log('Error', error);
+          });
+      }, [props.selectedCategories, props.selectedSize, props.price, props.selectedHexValues]);
 
     const allHexValue = props.allHexValues
 
@@ -159,14 +179,14 @@ const Filter = (props: Props) => {
                             <label htmlFor="" className='text-[15px] opacity-75'>Min</label>
                             <div className='relative'>
                                 <span className='absolute left-3 top-1'>$</span>
-                                <input className='w-full outline-none border-[1px] rounded-lg px-2 text-center py-[2px]' type="number" name="min" onChange={handelMinChange} value={props.price.min} id="" />
+                                <input className='w-full outline-none border-[1px] rounded-lg px-2 text-center py-[2px]' type="number" name="min" onChange={handleMinChange} value={props.price.min} id="" />
                             </div>
                         </div>
                         <div className='flex flex-col justify-center items-center'>
                             <label htmlFor="" className='text-[15px] opacity-75'>Max</label>
                             <div className='relative'>
                                 <span className='absolute left-3 top-1'>$</span>
-                                <input className='w-full outline-none border-[1px] rounded-lg px-2 text-center py-[2px]' type="number" name="max" onChange={handlMaxChange} value={props.price.max} id="" />
+                                <input className='w-full outline-none border-[1px] rounded-lg px-2 text-center py-[2px]' type="number" name="max" onChange={handleMaxChange} value={props.price.max} id="" />
                             </div>
                         </div>
                     </div>
@@ -195,37 +215,37 @@ const Filter = (props: Props) => {
                     <ul className='grid grid-cols-4 px-5 gap-5'>
                         <li
                         className={`border-[0.5px] rounded-lg text-center text-[14px] py-[2px] cursor-pointer ${props.selectedSize.includes('SM') ? 'bg-neutral-900 text-white':''}`}
-                        onClick={() => togglesize('SM')}
+                        onClick={() => toggleSize('SM')}
                         >
                             SM
                         </li>
                         <li
                         className={`border-[0.5px] rounded-lg text-center text-[14px] py-[2px] cursor-pointer ${props.selectedSize.includes('MD') ? 'bg-neutral-900 text-white':''}`}
-                        onClick={() => togglesize('MD')}
+                        onClick={() => toggleSize('MD')}
                         >
                             MD
                         </li>
                         <li
                         className={`border-[0.5px] rounded-lg text-center text-[14px] py-[2px] cursor-pointer ${props.selectedSize.includes('XL') ? 'bg-neutral-900 text-white':''}`}
-                        onClick={() => togglesize('XL')}
+                        onClick={() => toggleSize('XL')}
                         >
                             XL
                         </li>
                         <li
                         className={`border-[0.5px] rounded-lg text-center text-[14px] py-[2px] cursor-pointer ${props.selectedSize.includes('2XL') ? 'bg-neutral-900 text-white':''}`}
-                        onClick={() => togglesize('2XL')}
+                        onClick={() => toggleSize('2XL')}
                         >
                             2XL
                         </li>
                         <li
                         className={`border-[0.5px] rounded-lg text-center text-[14px] py-[2px] cursor-pointer ${props.selectedSize.includes('3XL') ? 'bg-neutral-900 text-white':''}`}
-                        onClick={() => togglesize('3XL')}
+                        onClick={() => toggleSize('3XL')}
                         >
                             3XL
                         </li>
                         <li
                         className={`border-[0.5px] rounded-lg text-center text-[14px] py-[2px] cursor-pointer ${props.selectedSize.includes('4XL') ? 'bg-neutral-900 text-white':''}`}
-                        onClick={() => togglesize('2XL')}
+                        onClick={() => toggleSize('2XL')}
                         >
                             4XL
                         </li>

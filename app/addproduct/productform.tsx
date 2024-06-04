@@ -8,6 +8,8 @@ import Size from '../components/Size';
 import Color from '../components/Color';
 import Para from '../components/Para';
 import ImageUpload from '../components/ImageUpload';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 type Props = {}
 
@@ -72,22 +74,25 @@ useEffect(()=>{
     }))
 },[imageUrls])
 
-const postData = async()=>{
-    handleImageChange()
-    try{
-        const response = await axios.post('/api/addproduct',formData)
-        router.push('/')
-        console.log(response)
-    }catch(error){
-        console.log(error)
-    }
-}
+const postData = async () => {
+  handleImageChange();
+  try {
+    const response = await axios.post('/api/addproduct', formData);
+    router.push('/');
+    console.log(response);
+    toast.success('Product added successfully!'); 
+  } catch (error) {
+    console.log(error);
+    toast.error('Failed to add the product'); 
+  }
+};
   return (
     <div className='px-5 max-w-[1280px] mx-auto mb-10'>
       <div>
         <Navbar />
       </div>
-      <h1 className='text-3xl font-semibold py-6'>Add your product in AUTH</h1>
+      <ToastContainer />
+      <h1 className='text-3xl font-semibold py-6'>Add your product in AURA</h1>
       <div className='text-black mt-4 '>
         <div className='grid md:grid-cols-2 grid-cols-1 gap-5'>
           <div>

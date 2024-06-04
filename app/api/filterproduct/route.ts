@@ -1,7 +1,6 @@
 import prisma from "@/app/prismadb";
 import { NextResponse } from "next/server";
 export const dynamic = 'auto'
-// 'auto' | 'force-dynamic' | 'error' | 'force-static'
 
 export async function GET(request: Request) {
   try {
@@ -25,7 +24,7 @@ export async function GET(request: Request) {
       },
     });
 
-    return NextResponse.json({ message: "API route is working" });
+    return NextResponse.json(products);
   } catch (error) {
     console.error("Error selecting product", error);
     return NextResponse.error();
